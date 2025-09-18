@@ -1,0 +1,64 @@
+server:
+  port: 8072
+
+spring:
+  application:
+    name: gatewayserver
+  config:
+    import: configserver:http://localhost:8071/
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      access: unrestricted
+    env:
+      show-values: always
+  info:
+    env:
+      enabled: true
+  health:
+    env:
+      enabled: true
+
+eureka:
+  security:
+    user:
+      name: admin
+      password: password
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://${eureka.security.user.name}:${eureka.security.user.password}@localhost:8070/eureka/
+    # Client local cache update frequency
+    registry-fetch-interval-seconds: 30
+  instance:
+    preferIpAddress: true
+    # Interval between two heartbeats sent to the server
+    lease-renewal-interval-in-seconds: 30
+    # Expiration time before eviction if no more heartbeat
+    lease-expiration-duration-in-seconds: 90
+
+info:
+  app:
+    name: "gatewayserver"
+    description: "Eazy Bank Gateway Server Application"
+    version: "1.0.0"
+
+logging:
+  level:
+    com:
+      eazybytes:
+        gatewayserver: DEBUG
